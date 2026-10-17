@@ -1,12 +1,12 @@
 ﻿using System;
 
-public class Game : Match
+public class Game
 {
     private string title;
 
     private string genre;
 
-    public Game(string title, string genre) : base("Team A", "Team B")
+    public Game(string title, string genre)
     {
         this.title = title;
         this.genre = genre;

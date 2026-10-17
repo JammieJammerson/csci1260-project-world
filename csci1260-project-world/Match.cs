@@ -1,55 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 
-public class Match : Team
+public class Match
 {
-    private string team1;
-
-    private string team2;
-    public Match(string team1, string team2) : base(team1, new Player[0])
+    public (int pointsA, int pointsB) Play(Team teamA, Team teamB, Random rnd = null)
     {
-        this.team1 = team1;
-        this.team2 = team2;
-    }
+        if (teamA == null) throw new ArgumentNullException(nameof(teamA));
+        if (teamB == null) throw new ArgumentNullException(nameof(teamB));
 
-    public void CheckRank(Player player1, Player player2)
-    {
-        if (player1.Rank == player2.Rank)
-        {
-            // Handle same rank case, run the match as normal
-        }
-        else if (player1.Rank != player2.Rank)
-        {
-            // Handle having different ranks case       
-        }
-    }
+        rnd ??= new Random();
 
-    public void CheckGame(Player player1, Player player2)
-    {
-        if (player1.Game == player2.Game)
-        {
-            // Handle same game case, run the match as normal
-        }
-        else if (player1.Game != player2.Game)
-        {
-            // Handle different game case
-        }
-    }
+        int pointsA = 0;
+        int pointsB = 0;
 
-    public bool CheckPlayStatus(Player player1, Player player2)
-    {
-        // both must be "active" to return true
-        return player1.PlayStatus == player2.PlayStatus;
-    }
+        int size = Math.Min(teamA.Players.Count, teamB.Players.Count);
 
-    public void StartMatch(Player player1, Player player2)
-    {
-        if (CheckPlayStatus(player1, player2))
+        for (int i = 0; i < size; i++)
         {
-            //
+            var pA = teamA.Players[i];
+            var pB = teamB.Players[i];
+
+            if (pA.PlayStatus != "Active" || pB.PlayStatus != "Active")
+            {
+                Console.WriteLine($"  Skipping match between {pA.Name} and {pB.Name} due to inactivity.");
+                continue;
+            }
+
+            bool aWins = rnd.Next(2) == 0;
+            if (aWins)
+            {
+                pointsA++;
+                Console.WriteLine($"  {pA.Name} (Team {teamA.TeamName}) defeated {pB.Name} (Team {teamB.TeamName})");
+            }
+            else
+            {
+                pointsB++;
+                Console.WriteLine($"  {pB.Name} (Team {teamB.TeamName}) defeated {pA.Name} (Team {teamA.TeamName})");
+            }
         }
-        else
-        {
-            Console.WriteLine("These players are not in the same category. Match cannot be run.");
-        }
+
+        return (pointsA, pointsB);
     }
 }

@@ -1,27 +1,53 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public class Team : Player
+public class Team
 {
     private string teamName;
+    private List<Player> players;
 
-    private Player[] players;
-
-    public Team(string teamName, Player[] players) : base(players[0].Name, players[0].Gamertag, players[0].Score, players[0].Rank, players[0].Game)
+    public Team(string teamName, IEnumerable<Player> players)
     {
         this.teamName = teamName;
-        this.players = players;
+
+        this.players = players?.ToList() ?? new List<Player>();
+
+        foreach (var p in this.players)
+        {
+            if (p != null)
+            {
+                p.TeamName = teamName;
+            }
+        }
     }
 
     public string TeamName { get { return teamName; } }
-    public void CheckTeam(Player player)
-    {
-        if(player.TeamName is null)
-        {
-            Console.WriteLine($"{player.Name} is not on a team.");
 
-        }
-        else
+    public List<Player> Players { get { return players; } }
+
+    public List<Player> TruncateTo(int size)
+    {
+        if (size <= 0)
         {
-            Console.WriteLine($"{player.Name} is on the {player.TeamName} team.");
+            var all = new List<Player>(players);
+            players.Clear();
+            return all;
         }
+
+        if (players.Count <= size) return new List<Player>();
+
+        var leftovers = players.Skip(size).ToList();
+        players = players.Take(size).ToList();
+        return leftovers;
+    }
+
+    public void AddPlayer(Player p)
+    {
+        if (p != null)
+        {
+            p.TeamName = teamName;
+            players.Add(p);
+        }
+    }
 }
