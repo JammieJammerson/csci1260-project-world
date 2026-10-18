@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Match
 {
-    public (int pointsA, int pointsB) Play(Team teamA, Team teamB, Random rnd = null)
+    public (int pointsA, int pointsB, string log) Play(Team teamA, Team teamB, Random rnd = null)
     {
         if (teamA == null) throw new ArgumentNullException(nameof(teamA));
         if (teamB == null) throw new ArgumentNullException(nameof(teamB));
@@ -12,7 +12,7 @@ public class Match
 
         int pointsA = 0;
         int pointsB = 0;
-
+        var sb = new System.Text.StringBuilder();
         int size = Math.Min(teamA.Players.Count, teamB.Players.Count);
 
         for (int i = 0; i < size; i++)
@@ -22,7 +22,7 @@ public class Match
 
             if (pA.PlayStatus != "Active" || pB.PlayStatus != "Active")
             {
-                Console.WriteLine($"  Skipping match between {pA.Name} and {pB.Name} due to inactivity.");
+                sb.AppendLine($"  Skipping match between {pA.Name} and {pB.Name} due to inactivity.");
                 continue;
             }
 
@@ -30,15 +30,15 @@ public class Match
             if (aWins)
             {
                 pointsA++;
-                Console.WriteLine($"  {pA.Name} (Team {teamA.TeamName}) defeated {pB.Name} (Team {teamB.TeamName})");
+                sb.AppendLine($"  {pA.Name} (Team {teamA.TeamName}) defeated {pB.Name} (Team {teamB.TeamName})");
             }
             else
             {
                 pointsB++;
-                Console.WriteLine($"  {pB.Name} (Team {teamB.TeamName}) defeated {pA.Name} (Team {teamA.TeamName})");
+                sb.AppendLine($"  {pB.Name} (Team {teamB.TeamName}) defeated {pA.Name} (Team {teamA.TeamName})");
             }
         }
 
-        return (pointsA, pointsB);
+        return (pointsA, pointsB, sb.ToString().TrimEnd('\r','\n'));
     }
 }

@@ -10,12 +10,11 @@ public class Tournament
     {
         this.matchName = matchName;
     }
-    public void RunTournament(List<Player> players)
+    public string RunTournament(List<Player> players)
     {
         if (players == null || players.Count == 0)
         {
-            Console.WriteLine("No players provided for the tournament.");
-            return;
+            return "No players provided for the tournament.";
         }
 
         var grouped = players
@@ -27,13 +26,14 @@ public class Tournament
 
         if (grouped.Count < 2)
         {
-            Console.WriteLine("Not enough teams to run a tournament. Need at least two teams.");
+            var sbFail = new System.Text.StringBuilder();
+            sbFail.AppendLine("Not enough teams to run a tournament. Need at least two teams.");
             if (stragglers.Count > 0)
             {
-                Console.WriteLine("Stragglers:");
-                foreach (var s in stragglers) Console.WriteLine($" - {s.Name} ({s.Gamertag})");
+                sbFail.AppendLine("Stragglers:");
+                foreach (var s in stragglers) sbFail.AppendLine($" - {s.Name} ({s.Gamertag})");
             }
-            return;
+            return sbFail.ToString().TrimEnd('\r','\n');
         }
         var teams = grouped.ToDictionary(kvp => kvp.Key, kvp => new Team(kvp.Key, kvp.Value));
 
@@ -45,7 +45,8 @@ public class Tournament
             if (leftovers.Count > 0) stragglers.AddRange(leftovers);
         }
 
-        Console.WriteLine($"Running tournament '{matchName}' with {teams.Count} teams, {minSize} players per team.");
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"Running tournament '{matchName}' with {teams.Count} teams, {minSize} players per team.");
 
         var teamPoints = teams.Keys.ToDictionary(k => k, k => 0);
         var rnd = new Random();
@@ -59,18 +60,19 @@ public class Tournament
             {
                 var teamA = teamList[i];
                 var teamB = teamList[j];
-                Console.WriteLine($"\nMatch: {teamA.TeamName} vs {teamB.TeamName}");
+                sb.AppendLine($"\nMatch: {teamA.TeamName} vs {teamB.TeamName}");
 
-                var (pointsA, pointsB) = matchRunner.Play(teamA, teamB, rnd);
+                var (pointsA, pointsB, log) = matchRunner.Play(teamA, teamB, rnd);
                 teamPoints[teamA.TeamName] += pointsA;
                 teamPoints[teamB.TeamName] += pointsB;
+                if (!string.IsNullOrEmpty(log)) sb.AppendLine(log);
             }
         }
 
-        Console.WriteLine("\nTournament results:");
+        sb.AppendLine("\nTournament results:");
         foreach (var kvp in teamPoints.OrderByDescending(k => k.Value))
         {
-            Console.WriteLine($" - {kvp.Key}: {kvp.Value} points");
+            sb.AppendLine($" - {kvp.Key}: {kvp.Value} points");
         }
 
         int maxPoints = teamPoints.Values.Max();
@@ -78,17 +80,19 @@ public class Tournament
 
         if (winners.Count == 1)
         {
-            Console.WriteLine($"\nWinner: {winners[0]} with {maxPoints} points");
+            sb.AppendLine($"\nWinner: {winners[0]} with {maxPoints} points");
         }
         else
         {
-            Console.WriteLine($"\nIt's a tie between: {string.Join(", ", winners)} with {maxPoints} points each");
+            sb.AppendLine($"\nIt's a tie between: {string.Join(", ", winners)} with {maxPoints} points each");
         }
 
         if (stragglers.Count > 0)
         {
-            Console.WriteLine("\nStragglers (not participating or left over):");
-            foreach (var s in stragglers) Console.WriteLine($" - {s.Name} ({s.Gamertag}) Team: {(string.IsNullOrEmpty(s.TeamName) ? "<none>" : s.TeamName)}");
+            sb.AppendLine("\nStragglers (not participating or left over):");
+            foreach (var s in stragglers) sb.AppendLine($" - {s.Name} ({s.Gamertag}) Team: {(string.IsNullOrEmpty(s.TeamName) ? "<none>" : s.TeamName)}");
         }
+
+        return sb.ToString().TrimEnd('\r','\n');
     }
 }

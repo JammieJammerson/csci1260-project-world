@@ -30,8 +30,8 @@ public class Score : IDescribe
         score--;
     }
 
-    public void Describe()
+    public string Describe()
     {
-        Console.WriteLine($"Player: {playerName}, Team: {teamName}, Score: {score}");
+        return $"Player: {playerName}, Team: {teamName}, Score: {score}";
     }
 }

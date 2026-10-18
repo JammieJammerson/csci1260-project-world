@@ -2,5 +2,5 @@
 
 public interface IDescribe
 {
-    void Describe();
+    string Describe();
 }

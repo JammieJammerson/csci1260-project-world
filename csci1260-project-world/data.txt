@@ -1,0 +1,5 @@
+John Doe|TheGamerGod42|100|Bronze|Marvel Rivals|SinglePlayer
+Jane Smith|JaneTheGreat|150|Bronze|World of Warcraft|Multiplayer|Team A
+INVALID LINE THAT WILL FAIL
+Randy Marsh|RandyTheRanger|200|Silver|World of Warcraft|Multiplayer|Team B
+Eric Cartman|RespectmaAthoratah|250|Gold|World of Warcraft|Multiplayer|Team A

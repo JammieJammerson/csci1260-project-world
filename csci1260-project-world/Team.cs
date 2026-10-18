@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class Team
+public class Team : GameEntity
 {
     private string teamName;
     private List<Player> players;
 
     public Team(string teamName, IEnumerable<Player> players)
     {
-        this.teamName = teamName;
+        if (string.IsNullOrWhiteSpace(teamName)) throw new ArgumentException("Team name required", nameof(teamName));
 
+        this.teamName = teamName;
         this.players = players?.ToList() ?? new List<Player>();
 
         foreach (var p in this.players)
@@ -25,6 +26,21 @@ public class Team
     public string TeamName { get { return teamName; } }
 
     public List<Player> Players { get { return players; } }
+
+    protected override string Summary()
+    {
+        return $"Team: {teamName} ({players.Count} players)";
+    }
+
+    protected override string DescribeDetails()
+    {
+        var sb = new System.Text.StringBuilder();
+        foreach (var p in players)
+        {
+            sb.AppendLine($"  - {p.Name} ({p.Gamertag}) Score: {p.Score}");
+        }
+        return sb.ToString().TrimEnd('\n','\r');
+    }
 
     public List<Player> TruncateTo(int size)
     {
@@ -49,5 +65,10 @@ public class Team
             p.TeamName = teamName;
             players.Add(p);
         }
+    }
+
+    public override string Describe()
+    {
+        return base.Describe();
     }
 }
