@@ -18,4 +18,4 @@ Design questions:
 3. Adding a new kind.
    New kind is a Coach (a kind of Participant that mentors players). Files to create is the Coach.cs (implements Coach : Participant). File to edit is the Program.cs. The PlayerManager does not need to change because it manages Player objects only. Coaches are a different kind and are not stored by PlayerManager, so the manager class remains unchanged.
 
- Recording: 
+ Recording: https://youtu.be/Y_IP2ZJ2Y0U
